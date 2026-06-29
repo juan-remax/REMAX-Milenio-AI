@@ -9,4 +9,5 @@ services:
 databases:
   - name: remax-milenio-db
     plan: free
-    databaseType: postgresql
+    type: postgresql
+    ipAllowList: []
