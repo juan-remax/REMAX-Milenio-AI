@@ -16,7 +16,7 @@ class AuthMiddleware(BaseMiddleware):
         if isinstance(event, Message):
             if event.from_user and event.from_user.id not in settings.allowed_user_ids:
                 await event.answer(
-                    "Lo siento, no estás autorizado para usar este bot."
+                    "⚠️ No estás autorizado para usar este bot."
                 )
                 return
 

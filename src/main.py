@@ -19,9 +19,12 @@ async def startup():
     global _polling_task
     logger.info(f"Starting {settings.app_name}")
 
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database tables ensured")
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables ensured")
+    except Exception as e:
+        logger.warning(f"Database not available: {e}. Bot will run without persistence.")
 
     _polling_task = asyncio.create_task(dp.start_polling(bot))
 
