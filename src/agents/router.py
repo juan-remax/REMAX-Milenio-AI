@@ -1,7 +1,7 @@
-from src.agents.lead_agent import LeadAgent
-from src.agents.property_agent import PropertyAgent
-from src.agents.marketing_agent import MarketingAgent
 from src.agents.intent_classifier import classify_intent
+from src.agents.lead_agent import LeadAgent
+from src.agents.marketing_agent import MarketingAgent
+from src.agents.property_agent import PropertyAgent
 from src.memory.conversation_log import log_conversation
 
 lead_agent = LeadAgent()
@@ -19,9 +19,19 @@ async def route_intent(text: str, user_id: int) -> str:
     elif intent == "marketing":
         response = await marketing_agent.handle(text, user_id)
     elif intent == "task":
-        response = "📋 *Tareas pendientes:*\n- Feature 001: Telegram Bot\n- Feature 002: Agent Router\n\nUsa /help para más opciones."
+        response = (
+            "📋 *Tareas pendientes:*\n"
+            "- Feature 001: Telegram Bot\n"
+            "- Feature 002: Agent Router\n\n"
+            "Usa /help para más opciones."
+        )
     elif intent == "status":
-        response = "📊 *Resumen del día:*\n- Leads hoy: 0\n- Propiedades nuevas: 0\n- Tareas pendientes: 2"
+        response = (
+            "📊 *Resumen del día:*\n"
+            "- Leads hoy: 0\n"
+            "- Propiedades nuevas: 0\n"
+            "- Tareas pendientes: 2"
+        )
     else:
         response = (
             "No entendí tu mensaje. Puedes escribir cosas como:\n"

@@ -4,9 +4,9 @@ from fastapi import FastAPI
 from loguru import logger
 
 from src.config.settings import settings
-from src.telegram.router import setup_bot, dp
 from src.database.models.base import Base
 from src.database.session import engine
+from src.telegram.router import dp, setup_bot
 
 app = FastAPI(title=settings.app_name)
 

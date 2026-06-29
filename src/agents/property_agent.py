@@ -20,7 +20,11 @@ class PropertyAgent(BaseAgent):
     async def _create_property(self, text: str) -> str:
         parts = [p.strip() for p in text.split("|")]
         if len(parts) < 3:
-            return "❌ Formato incorrecto. Usa: `Título | Dirección | Tipo | Precio | m² | Hab | Baños`"
+            msg = (
+                "❌ Formato incorrecto.\n"
+                "Usa: `Título | Dirección | Tipo | Precio | m² | Hab | Baños`"
+            )
+            return msg
 
         title = parts[0]
         address = parts[1]
@@ -35,7 +39,8 @@ class PropertyAgent(BaseAgent):
         property_type_normalized = type_map.get(property_type, "apartment")
 
         try:
-            price = float(parts[3].replace(".", "").replace(",", ".")) if len(parts) > 3 and parts[3] else 0
+            raw_price = parts[3].replace(".", "").replace(",", ".")
+            price = float(raw_price) if len(parts) > 3 and parts[3] else 0
         except (ValueError, IndexError):
             price = 0
 

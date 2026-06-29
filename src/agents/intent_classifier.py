@@ -1,7 +1,17 @@
 INTENT_RULES = {
-    "lead": ["nuevo cliente", "nuevo lead", "registrar cliente", "captar", "lead", "cliente potencial", "interesado"],
-    "property": ["nueva propiedad", "registrar propiedad", "alta propiedad", "listing", "propiedad", "inmueble", "casa", "piso"],
-    "marketing": ["publicar", "marketing", "anuncio", "redes", "publicación", "promocionar", "difundir"],
+    "marketing": [
+        "publicar", "marketing", "anuncio", "redes",
+        "publicación", "promocionar", "difundir",
+    ],
+    "lead": [
+        "nuevo cliente", "nuevo lead", "registrar cliente",
+        "captar", "lead", "cliente potencial", "interesado",
+    ],
+    "property": [
+        "nueva propiedad", "registrar propiedad", "alta propiedad",
+        "listing", "inmueble", "casa", "piso",
+        "local comercial", "terreno",
+    ],
     "task": ["tarea", "pendiente", "recordatorio", "hacer", "to-do"],
     "status": ["estado", "resumen", "balance", "cómo voy", "reporte"],
 }

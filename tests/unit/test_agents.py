@@ -1,9 +1,9 @@
 import pytest
 
-from src.agents.lead_agent import LeadAgent
-from src.agents.property_agent import PropertyAgent
-from src.agents.marketing_agent import MarketingAgent
 from src.agents.intent_classifier import classify_intent
+from src.agents.lead_agent import LeadAgent
+from src.agents.marketing_agent import MarketingAgent
+from src.agents.property_agent import PropertyAgent
 
 
 @pytest.mark.asyncio
@@ -17,7 +17,8 @@ async def test_lead_agent_help(sample_user_id):
 @pytest.mark.asyncio
 async def test_lead_agent_create(sample_user_id):
     agent = LeadAgent()
-    response = await agent.handle("Juan Pérez | 612345678 | juan@email.com | comprador", sample_user_id)
+    text = "Juan Pérez | 612345678 | juan@email.com | comprador"
+    response = await agent.handle(text, sample_user_id)
     assert "Lead" in response or "Error" in response
     # Si no hay DB, esperamos error, no crash
 
@@ -39,7 +40,8 @@ async def test_marketing_agent(sample_user_id):
 @pytest.mark.asyncio
 async def test_marketing_description(sample_user_id):
     agent = MarketingAgent()
-    response = await agent.handle("Piso centro | Calle Mayor | 180000 | 90 | 3 | 2 | terraza", sample_user_id)
+    text = "Piso centro | Calle Mayor | 180000 | 90 | 3 | 2 | terraza"
+    response = await agent.handle(text, sample_user_id)
     assert "Piso centro" in response
     assert "terraza" in response
 

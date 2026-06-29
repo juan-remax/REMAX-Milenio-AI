@@ -3,7 +3,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from src.config.settings import settings
-from src.telegram.handlers import start, help, message, issue, commands, confirmation
+from src.telegram.handlers import commands, confirmation, help, issue, message, start
 from src.telegram.middlewares.auth import AuthMiddleware
 
 dp = Dispatcher()

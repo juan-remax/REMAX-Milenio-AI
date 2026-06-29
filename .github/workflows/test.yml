@@ -44,4 +44,4 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/remax_milenio_test
           BOT_TOKEN: test
-          ALLOWED_USER_IDS: "123456789"
+          ALLOWED_USER_IDS: "[123456789]"

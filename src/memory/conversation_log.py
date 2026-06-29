@@ -1,8 +1,8 @@
 from loguru import logger
 
+from src.agents.intent_classifier import classify_intent
 from src.database.models.conversation import Conversation
 from src.database.session import async_session_factory
-from src.agents.intent_classifier import classify_intent
 
 
 async def log_conversation(user_id: int, user_message: str, bot_response: str) -> None:

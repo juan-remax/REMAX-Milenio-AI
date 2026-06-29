@@ -36,7 +36,10 @@ class LeadAgent(BaseAgent):
 
         try:
             async with async_session_factory() as session:
-                lead = Lead(name=name, phone=phone, email=email, lead_type=lead_type_normalized, source="telegram")
+                lead = Lead(
+                    name=name, phone=phone, email=email,
+                    lead_type=lead_type_normalized, source="telegram",
+                )
                 session.add(lead)
                 await session.commit()
                 await session.refresh(lead)
