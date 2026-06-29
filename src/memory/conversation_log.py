@@ -2,7 +2,7 @@ from loguru import logger
 
 from src.database.models.conversation import Conversation
 from src.database.session import async_session_factory
-from src.agents.router import classify_intent
+from src.agents.intent_classifier import classify_intent
 
 
 async def log_conversation(user_id: int, user_message: str, bot_response: str) -> None:
@@ -19,4 +19,4 @@ async def log_conversation(user_id: int, user_message: str, bot_response: str) -
             session.add(conversation)
             await session.commit()
     except Exception as e:
-        logger.error(f"Failed to log conversation: {e}")
+        logger.debug(f"Logging skipped (DB may be offline): {e}")

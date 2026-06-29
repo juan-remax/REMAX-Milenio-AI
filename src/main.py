@@ -1,24 +1,31 @@
+import asyncio
+
 from fastapi import FastAPI
 from loguru import logger
 
 from src.config.settings import settings
-from src.telegram.router import setup_dispatcher
+from src.telegram.router import setup_bot, dp
 
 app = FastAPI(title=settings.app_name)
 
-dispatcher = setup_dispatcher()
+bot = setup_bot()
+_polling_task: asyncio.Task | None = None
 
 
 @app.on_event("startup")
 async def startup():
+    global _polling_task
     logger.info(f"Starting {settings.app_name}")
-    await dispatcher.start_polling()
+    _polling_task = asyncio.create_task(dp.start_polling(bot))
 
 
 @app.on_event("shutdown")
 async def shutdown():
+    global _polling_task
     logger.info(f"Shutting down {settings.app_name}")
-    await dispatcher.stop_polling()
+    if _polling_task:
+        _polling_task.cancel()
+    await bot.session.close()
 
 
 @app.get("/health")

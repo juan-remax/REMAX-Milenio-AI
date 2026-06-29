@@ -1,0 +1,10 @@
+{
+  "planMode": true,
+  "customInstructions": "Para este proyecto REMAX Milenio AI, sigue estrictamente el plan definido en specs/. No implementes nada sin spec aprobada. Primero presenta el plan, espera aprobación, luego implementa.",
+  "rules": [
+    "Siempre pedir confirmación antes de escribir código para nuevas features",
+    "Verificar AGENTS.md antes de tomar decisiones",
+    "No exponer secretos ni tokens en código",
+    "Commits descriptivos"
+  ]
+}
