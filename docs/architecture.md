@@ -1,0 +1,62 @@
+# Arquitectura — REMAX Milenio AI
+
+## Diagrama de componentes
+
+```text
+┌──────────────────────────────────────────────────┐
+│                   Telegram                        │
+│  ┌─────────────┐  ┌──────────┐  ┌────────────┐  │
+│  │  Texto libre │  │ Comandos │  │  Archivos  │  │
+│  └──────┬──────┘  └────┬─────┘  └─────┬──────┘  │
+└─────────┼──────────────┼──────────────┼──────────┘
+          │              │              │
+          ▼              ▼              ▼
+┌──────────────────────────────────────────────────┐
+│              FastAPI + aiogram                    │
+│                                                   │
+│  ┌──────────────┐    ┌──────────────────────┐    │
+│  │  Telegram     │───▶│   Agent Router       │    │
+│  │  Handler      │    │   (clasifica intento)│    │
+│  └──────────────┘    └───────┬──────────────┘    │
+│                              │                    │
+│         ┌────────────────────┼────────────────┐   │
+│         ▼                    ▼                ▼   │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │
+│  │Agente    │  │Agente    │  │Agente        │   │
+│  │Leads     │  │Marketing │  │Propiedades   │   │
+│  └────┬─────┘  └────┬─────┘  └──────┬───────┘   │
+│       │             │               │           │
+│       ▼             ▼               ▼           │
+│  ┌────────────────────────────────────────────┐ │
+│  │         Servicios Compartidos              │ │
+│  │  ┌────────┐ ┌───────┐ ┌──────┐ ┌──────┐  │ │
+│  │  │ DB     │ │GitHub │ │Memoria││Notif │  │ │
+│  │  │(PG)   │ │(PyGithub)│ │(logs)│ │      │  │ │
+│  │  └────────┘ └───────┘ └──────┘ └──────┘  │ │
+│  └────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────┘
+```
+
+## Flujo de mensaje
+
+1. **Usuario** envía mensaje en Telegram
+2. **Telegram Handler** (aiogram) recibe el mensaje
+3. **Middleware de Auth** verifica whitelist de user_ids
+4. **Agent Router** clasifica la intención usando regex + keywords
+5. **Agente especializado** procesa la solicitud
+6. **Servicios compartidos** (DB, GitHub, Memoria) ejecutan acciones
+7. **Guardrails** solicita confirmación si la acción es crítica
+8. **Respuesta** se envía de vuelta al usuario por Telegram
+9. **Log** de la conversación se almacena en PostgreSQL
+
+## Capas
+
+| Capa | Responsabilidad | Tecnología |
+|---|---|---|
+| Presentación | Interfaz con el usuario | Telegram + aiogram |
+| Enrutamiento | Clasificar y delegar | Agent Router (Python) |
+| Lógica de negocio | Ejecutar tareas inmobiliarias | Agentes especializados |
+| Persistencia | Almacenar datos | PostgreSQL + SQLAlchemy |
+| Integración | Conectar con GitHub | PyGithub |
+| Memoria | Registrar y recuperar contexto | DB + logs |
+| Seguridad | Autenticar y autorizar | Middleware + guardrails |
