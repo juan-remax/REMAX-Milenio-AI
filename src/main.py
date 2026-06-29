@@ -5,6 +5,8 @@ from loguru import logger
 
 from src.config.settings import settings
 from src.telegram.router import setup_bot, dp
+from src.database.models.base import Base
+from src.database.session import engine
 
 app = FastAPI(title=settings.app_name)
 
@@ -16,6 +18,11 @@ _polling_task: asyncio.Task | None = None
 async def startup():
     global _polling_task
     logger.info(f"Starting {settings.app_name}")
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database tables ensured")
+
     _polling_task = asyncio.create_task(dp.start_polling(bot))
 
 

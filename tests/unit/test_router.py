@@ -1,6 +1,6 @@
 import pytest
 
-from src.agents.router import classify_intent
+from src.agents.intent_classifier import classify_intent
 
 
 @pytest.mark.parametrize(

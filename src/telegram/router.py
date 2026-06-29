@@ -3,7 +3,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from src.config.settings import settings
-from src.telegram.handlers import start, help, message, issue, commands
+from src.telegram.handlers import start, help, message, issue, commands, confirmation
 from src.telegram.middlewares.auth import AuthMiddleware
 
 dp = Dispatcher()
@@ -14,6 +14,7 @@ dp.include_router(start.router)
 dp.include_router(help.router)
 dp.include_router(issue.router)
 dp.include_router(commands.router)
+dp.include_router(confirmation.router)
 dp.include_router(message.router)
 
 
