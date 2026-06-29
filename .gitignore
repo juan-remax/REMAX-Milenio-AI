@@ -24,6 +24,10 @@ pgdata/
 # Logs
 *.log
 
+# Database
+data/
+*.db
+
 # Testing
 htmlcov/
 .coverage
