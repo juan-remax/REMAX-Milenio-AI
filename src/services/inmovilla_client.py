@@ -107,8 +107,8 @@ class InmovillaClient:
             return [result]
         return None
 
-    async def list_properties(self, start: int = 1, limit: int = 50) -> list[dict] | None:
-        result = await self._request("GET", f"/propiedades/?listar&inicio={start}&limit={limit}")
+    async def list_properties(self) -> list[dict] | None:
+        result = await self._request("GET", "/propiedades/?listado")
         if isinstance(result, list):
             return result
         return None

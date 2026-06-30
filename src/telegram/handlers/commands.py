@@ -104,56 +104,75 @@ async def cmd_sincronizar(message: Message):
         await message.answer("⚠️ Inmovilla no está configurado. Añade INMOVILLA_TOKEN en .env")
         return
 
-    await message.answer("🔄 Sincronizando propiedades desde Inmovilla...")
+    await message.answer("🔄 Obteniendo listado de propiedades desde Inmovilla...")
 
-    page = 1
+    props_list = await inmovilla_client.list_properties()
+    if not props_list:
+        await message.answer("No se encontraron propiedades en Inmovilla.")
+        return
+
+    total = len(props_list)
+    await message.answer(f"📋 Se encontraron {total} propiedades. Descargando detalles...")
+
     imported = 0
     updated = 0
+    errors = 0
 
-    while True:
-        props = await inmovilla_client.list_properties(start=page, limit=50)
-        if not props:
-            break
+    for i, item in enumerate(props_list):
+        cod_ofer = str(item.get("cod_ofer", ""))
+        if not cod_ofer:
+            continue
+
+        details = await inmovilla_client.get_property(cod_ofer)
+        if not details:
+            errors += 1
+            continue
 
         async with async_session_factory() as session:
-            for p in props:
-                cod_ofer = str(p.get("cod_ofer", ""))
-                if not cod_ofer:
-                    continue
+            result = await session.execute(
+                select(Property).where(Property.cod_ofer == cod_ofer)
+            )
+            existing = result.scalar_one_or_none()
 
-                result = await session.execute(
-                    select(Property).where(Property.cod_ofer == cod_ofer)
+            ref = details.get("ref", cod_ofer)
+            title = f"{details.get('nbtipo', 'Propiedad')} - Ref {ref}"
+            address = f"{details.get('calle', '')} {details.get('numero', '')}".strip()
+            price = float(details.get("precioinmo", 0) or 0)
+            sqm = float(details.get("m_cons", 0) or 0) or None
+            bedrooms = details.get("total_hab")
+            bathrooms = details.get("banyos")
+
+            if existing:
+                existing.title = title
+                existing.address = address
+                existing.price = price
+                existing.square_meters = sqm
+                existing.bedrooms = bedrooms
+                existing.bathrooms = bathrooms
+                updated += 1
+            else:
+                prop = Property(
+                    cod_ofer=cod_ofer,
+                    title=title,
+                    address=address,
+                    property_type=details.get("nbtipo", "unknown"),
+                    price=price,
+                    square_meters=sqm,
+                    bedrooms=bedrooms,
+                    bathrooms=bathrooms,
+                    status="active",
                 )
-                existing = result.scalar_one_or_none()
-
-                if existing:
-                    existing.price = float(p.get("precioinmo", 0) or existing.price)
-                    val = float(p.get("m_cons", 0) or 0)
-                    existing.square_meters = val or existing.square_meters
-                    existing.bedrooms = p.get("total_hab", existing.bedrooms)
-                    existing.bathrooms = p.get("banyos", existing.bathrooms)
-                    updated += 1
-                else:
-                    prop = Property(
-                        cod_ofer=cod_ofer,
-                        title=f"{p.get('nbtipo', 'Propiedad')} - Ref {p.get('ref', cod_ofer)}",
-                        address=f"{p.get('calle', '')} {p.get('numero', '')}".strip(),
-                        property_type=p.get("nbtipo", "unknown"),
-                        price=float(p.get("precioinmo", 0) or 0),
-                        square_meters=float(p.get("m_cons", 0) or 0) or None,
-                        bedrooms=p.get("total_hab"),
-                        bathrooms=p.get("banyos"),
-                        status="active",
-                    )
-                    session.add(prop)
-                    imported += 1
+                session.add(prop)
+                imported += 1
 
             await session.commit()
 
-        page += 1
+        if (i + 1) % 10 == 0:
+            await message.answer(f"⏳ Progreso: {i + 1}/{total}")
 
     await message.answer(
         f"✅ *Sincronización completa!*\n\n"
         f"• Nuevas: {imported}\n"
-        f"• Actualizadas: {updated}"
+        f"• Actualizadas: {updated}\n"
+        f"{'• Errores: ' + str(errors) if errors else ''}"
     )
