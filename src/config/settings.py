@@ -26,5 +26,12 @@ class Settings(BaseSettings):
             return [v]
         return v or []
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalize_database_url(cls, v):
+        if v and v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+
 
 settings = Settings()
