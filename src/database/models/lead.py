@@ -15,3 +15,4 @@ class Lead(Base, TimestampMixin):
     status: Mapped[str] = mapped_column(String(50), default="new")
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     source: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    inmovilla_cod_cli: Mapped[str | None] = mapped_column(String(50), nullable=True)

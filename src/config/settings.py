@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     allowed_user_ids: list[int] = []
     github_token: str = ""
     github_repo: str = "juan-remax/REMAX-Milenio-AI"
+    inmovilla_token: str = ""
+    inmovilla_numagencia: str = ""
     database_url: str = "sqlite+aiosqlite:///data/remax_milenio.db"
     app_name: str = "REMAX Milenio AI"
     debug: bool = True

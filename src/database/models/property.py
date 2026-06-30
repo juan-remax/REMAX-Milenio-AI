@@ -8,6 +8,7 @@ class Property(Base, TimestampMixin):
     __tablename__ = "properties"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    cod_ofer: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True)
     title: Mapped[str] = mapped_column(String(300), nullable=False)
     address: Mapped[str] = mapped_column(String(500), nullable=False)
     property_type: Mapped[str] = mapped_column(String(50), nullable=False)

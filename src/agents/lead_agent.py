@@ -1,6 +1,7 @@
 from src.agents.base import BaseAgent
 from src.database.models.lead import Lead
 from src.database.session import async_session_factory
+from src.services.inmovilla_client import inmovilla_client
 
 
 class LeadAgent(BaseAgent):
@@ -34,24 +35,44 @@ class LeadAgent(BaseAgent):
         }
         lead_type_normalized = type_map.get(lead_type, "buyer")
 
+        inmovilla_cod_cli = None
+        if inmovilla_client.enabled:
+            apellidos = ""
+            nombre_parts = name.split(" ", 1)
+            if len(nombre_parts) > 1:
+                nombre = nombre_parts[0]
+                apellidos = nombre_parts[1]
+            else:
+                nombre = name
+            inmovilla_cod_cli = await inmovilla_client.create_client(
+                nombre=nombre, apellidos=apellidos, telefono=phone, email=email,
+            )
+
         try:
             async with async_session_factory() as session:
                 lead = Lead(
                     name=name, phone=phone, email=email,
                     lead_type=lead_type_normalized, source="telegram",
+                    inmovilla_cod_cli=inmovilla_cod_cli,
                 )
                 session.add(lead)
                 await session.commit()
                 await session.refresh(lead)
 
-                return (
-                    f"✅ *Lead registrado correctamente!*\n\n"
-                    f"*ID:* #{lead.id}\n"
-                    f"*Nombre:* {lead.name}\n"
-                    f"*Teléfono:* {lead.phone or '—'}\n"
-                    f"*Email:* {lead.email or '—'}\n"
-                    f"*Tipo:* {lead_type_normalized}\n"
-                    f"*Estado:* {lead.status}"
-                )
+                lines = [
+                    "✅ *Lead registrado correctamente!*",
+                    f"*ID:* #{lead.id}",
+                    f"*Nombre:* {lead.name}",
+                    f"*Teléfono:* {lead.phone or '—'}",
+                    f"*Email:* {lead.email or '—'}",
+                    f"*Tipo:* {lead_type_normalized}",
+                    f"*Estado:* {lead.status}",
+                ]
+                if inmovilla_cod_cli:
+                    lines.append(f"*Inmovilla:* Cliente #{inmovilla_cod_cli}")
+                elif inmovilla_client.enabled:
+                    lines.append("_⚠️ No se pudo sincronizar con Inmovilla_")
+
+                return "\n".join(lines)
         except Exception as e:
             return f"❌ Error al guardar el lead: {e}"

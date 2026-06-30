@@ -16,6 +16,8 @@ async def cmd_help(message: Message):
         "/issue — Crear tarea en GitHub (`/issue Título | Descripción`)\n"
         "/tareas — Ver tareas pendientes en GitHub\n"
         "/estado — Resumen del día\n"
+        "/buscarcliente — Buscar cliente en Inmovilla\n"
+        "/sincronizar — Sincronizar propiedades desde Inmovilla\n"
         "/cancelar — Cancelar operación actual\n\n"
         "También puedes escribir en lenguaje natural y te entenderé."
     )
